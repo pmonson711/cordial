@@ -12,7 +12,7 @@ defmodule Cordial.Edge do
     timestamps
   end
 
-  @required_fields ~w()
+  @required_fields ~w(subject_id predicate_id object_id inserted_by_id modified_by_id)
   @optional_fields ~w()
 
   @doc """

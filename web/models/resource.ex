@@ -18,8 +18,8 @@ defmodule Cordial.Resource do
     timestamps
   end
 
-  @required_fields ~w()
-  @optional_fields ~w()
+  @required_fields ~w(name inserted_by_id modified_by_id category_id)
+  @optional_fields ~w(is_authoritative is_protected publication_start publication_end version)
 
   @doc """
   Creates a changeset based on the `model` and `params`.
@@ -38,9 +38,15 @@ defmodule Cordial.Resource do
     changeset
     |> delete_change(:publication_start)
   end
+  defp clean_publication_start(%Ecto.Changeset{} = changeset) do
+    changeset
+  end
 
   defp clean_publication_end(%Ecto.Changeset{changes: %{ publication_end: nil }, model: %{ publication_end: nil }} = changeset) do
     changeset
     |> delete_change(:publication_end)
+  end
+  defp clean_publication_end(%Ecto.Changeset{} = changeset) do
+    changeset
   end
 end

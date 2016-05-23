@@ -7,7 +7,7 @@ defmodule Cordial.IdentityType do
     timestamps
   end
 
-  @required_fields ~w()
+  @required_fields ~w(name)
   @optional_fields ~w()
 
   @doc """

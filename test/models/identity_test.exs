@@ -3,11 +3,11 @@ defmodule Cordial.IdentityTest do
 
   alias Cordial.Identity
 
-  @valid_attrs %{}
+  @valid_attrs %{name: "test"}
   @invalid_attrs %{}
 
   test "changeset with valid attributes" do
-    changeset = Identity.changeset(%Identity{}, @valid_attrs)
+    changeset = Identity.changeset(%Identity{resource_id: 0, type_id: 0}, @valid_attrs)
     assert changeset.valid?
   end
 

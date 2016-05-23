@@ -7,7 +7,7 @@ defmodule Cordial.EdgeTest do
   @invalid_attrs %{}
 
   test "changeset with valid attributes" do
-    changeset = Edge.changeset(%Edge{}, @valid_attrs)
+    changeset = Edge.changeset(%Edge{predicate_id: 0, subject_id: 0, object_id: 0, inserted_by_id: 0, modified_by_id: 0}, @valid_attrs)
     assert changeset.valid?
   end
 

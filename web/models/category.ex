@@ -9,7 +9,7 @@ defmodule Cordial.Category do
     timestamps
   end
 
-  @required_fields ~w()
+  @required_fields ~w(resource_id parent_id)
   @optional_fields ~w()
 
   @doc """

@@ -3,7 +3,7 @@ defmodule Cordial.CategoryTest do
 
   alias Cordial.Category
 
-  @valid_attrs %{}
+  @valid_attrs %{resource_id: 0, parent_id: 0}
   @invalid_attrs %{}
 
   test "changeset with valid attributes" do

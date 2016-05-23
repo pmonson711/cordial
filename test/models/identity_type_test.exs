@@ -3,7 +3,7 @@ defmodule Cordial.IdentityTypeTest do
 
   alias Cordial.IdentityType
 
-  @valid_attrs %{}
+  @valid_attrs %{name: ""}
   @invalid_attrs %{}
 
   test "changeset with valid attributes" do
