@@ -34,19 +34,19 @@ defmodule Cordial.Resource do
     |> clean_publication_end
   end
 
-  defp clean_publication_start(%Ecto.Changeset{changes: %{ publication_start: nil }, model: %{ publication_start: nil }} = changeset) do
-    changeset
+  defp clean_publication_start(%Ecto.Changeset{changes: %{publication_start: nil}, model: %{publication_start: nil}} = changeset_to_clean) do
+    changeset_to_clean
     |> delete_change(:publication_start)
   end
-  defp clean_publication_start(%Ecto.Changeset{} = changeset) do
-    changeset
+  defp clean_publication_start(%Ecto.Changeset{} = changeset_to_clean) do
+    changeset_to_clean
   end
 
-  defp clean_publication_end(%Ecto.Changeset{changes: %{ publication_end: nil }, model: %{ publication_end: nil }} = changeset) do
-    changeset
+  defp clean_publication_end(%Ecto.Changeset{changes: %{publication_end: nil}, model: %{publication_end: nil}} = changeset_to_clean) do
+    changeset_to_clean
     |> delete_change(:publication_end)
   end
-  defp clean_publication_end(%Ecto.Changeset{} = changeset) do
-    changeset
+  defp clean_publication_end(%Ecto.Changeset{} = changeset_to_clean) do
+    changeset_to_clean
   end
 end
