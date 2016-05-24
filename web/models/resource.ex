@@ -27,26 +27,12 @@ defmodule Cordial.Resource do
   If no params are provided, an invalid changeset is returned
   with no validation performed.
   """
-  def changeset(model, params \\ :empty) do
+  def changeset(model, params \\ %{}) do
     model
     |> cast(params, @required_fields, @optional_fields)
-    |> clean_publication_start
-    |> clean_publication_end
-  end
-
-  defp clean_publication_start(%Ecto.Changeset{changes: %{publication_start: nil}, model: %{publication_start: nil}} = changeset_to_clean) do
-    changeset_to_clean
-    |> delete_change(:publication_start)
-  end
-  defp clean_publication_start(%Ecto.Changeset{} = changeset_to_clean) do
-    changeset_to_clean
-  end
-
-  defp clean_publication_end(%Ecto.Changeset{changes: %{publication_end: nil}, model: %{publication_end: nil}} = changeset_to_clean) do
-    changeset_to_clean
-    |> delete_change(:publication_end)
-  end
-  defp clean_publication_end(%Ecto.Changeset{} = changeset_to_clean) do
-    changeset_to_clean
+    |> foreign_key_constraint(:inserted_by_id)
+    |> foreign_key_constraint(:modified_by_id)
+    |> foreign_key_constraint(:visible_for_id)
+    |> foreign_key_constraint(:category_id)
   end
 end

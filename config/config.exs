@@ -14,6 +14,8 @@ config :cordial, Cordial.Endpoint,
   pubsub: [name: Cordial.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
+config :cordial, ecto_repos: [Cordial.Repo]
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

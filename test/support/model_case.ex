@@ -26,8 +26,10 @@ defmodule Cordial.ModelCase do
   end
 
   setup tags do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Cordial.Repo)
+
     unless tags[:async] do
-      Ecto.Adapters.SQL.restart_test_transaction(Cordial.Repo, [])
+      Ecto.Adapters.SQL.Sandbox.mode(Cordial.Repo, {:shared, self()})
     end
 
     :ok
