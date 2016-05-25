@@ -32,16 +32,6 @@ defmodule Cordial.ResourceTest do
   test "changeset with valid attributes inserts" do
     changeset = Resource.changeset(%Resource{}, @valid_attrs)
 
-    assert changeset.valid?
-
-    refute changeset
-    |> Map.get(:changes)
-    |> Map.has_key?(:publication_start)
-
-    refute changeset
-    |> Map.get(:changes)
-    |> Map.has_key?(:publication_end)
-
     Cordial.Repo.insert! changeset
 
     %Resource{publication_start: start_dt, publication_end: end_dt} =
