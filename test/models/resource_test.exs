@@ -9,12 +9,6 @@ defmodule Cordial.ResourceTest do
   test "changeset with valid attributes" do
     changeset = Resource.changeset(%Resource{}, @valid_attrs)
     assert changeset.valid?
-    refute changeset
-    |> Map.get(:changes)
-    |> Map.has_key?(:publication_start)
-    refute changeset
-    |> Map.get(:changes)
-    |> Map.has_key?(:publication_end)
   end
 
   test "changeset with valid attributes and publication start" do
@@ -37,16 +31,39 @@ defmodule Cordial.ResourceTest do
   @tag :integration
   test "changeset with valid attributes inserts" do
     changeset = Resource.changeset(%Resource{}, @valid_attrs)
+
     assert changeset.valid?
+
     refute changeset
     |> Map.get(:changes)
     |> Map.has_key?(:publication_start)
+
     refute changeset
     |> Map.get(:changes)
     |> Map.has_key?(:publication_end)
+
     Cordial.Repo.insert! changeset
-    resource = %Resource{publication_start: start_dt, publication_end: end_dt} = Cordial.Repo.get_by!(Resource, name: "test_insert")
-    assert :eq = Ecto.DateTime.compare(end_dt, Ecto.DateTime.from_erl({{9999, 06, 01}, {0, 0, 0}}))
-    assert :lt = Ecto.DateTime.compare(start_dt, Ecto.DateTime.from_erl({{9999, 06, 01}, {0, 0, 0}}))
+
+    %Resource{publication_start: start_dt, publication_end: end_dt} =
+      Cordial.Repo.get_by!(Resource, name: "test_insert")
+
+    now = :erlang.timestamp
+    |> :calendar.now_to_datetime
+    |> Ecto.DateTime.from_erl
+
+    end_of_time = {{9999, 06, 01}, {0, 0, 0}}
+    |> Ecto.DateTime.from_erl
+
+    now_date = now
+    |> Ecto.DateTime.to_date
+
+    assert :eq = end_dt
+    |> Ecto.DateTime.compare(end_of_time)
+
+    assert :lt = start_dt
+    |> Ecto.DateTime.compare(now)
+
+    assert :eq = Ecto.DateTime.to_date(start_dt)
+    |> Ecto.Date.compare(now_date)
   end
 end
