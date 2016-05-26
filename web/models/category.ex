@@ -21,5 +21,8 @@ defmodule Cordial.Category do
   def changeset(model, params \\ %{}) do
     model
     |> cast(params, @required_fields, @optional_fields)
+    |> unique_constraint(:category)
+    |> foreign_key_constraint(:parent_id)
+    |> foreign_key_constraint(:resource_id)
   end
 end

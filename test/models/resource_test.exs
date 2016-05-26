@@ -30,30 +30,51 @@ defmodule Cordial.ResourceTest do
 
   @tag :integration
   test "changeset with valid attributes inserts" do
-    changeset = Resource.changeset(%Resource{}, @valid_attrs)
+    test_insert
+  end
 
-    Cordial.Repo.insert! changeset
-
-    %Resource{publication_start: start_dt, publication_end: end_dt} =
-      Cordial.Repo.get_by!(Resource, name: "test_insert")
+  @tag :integration
+  test "changeset with valid attributes inserts has publication start" do
+    r = test_insert
 
     now = :erlang.timestamp
     |> :calendar.now_to_datetime
     |> Ecto.DateTime.from_erl
 
-    end_of_time = {{9999, 06, 01}, {0, 0, 0}}
-    |> Ecto.DateTime.from_erl
-
     now_date = now
     |> Ecto.DateTime.to_date
 
-    assert :eq = end_dt
-    |> Ecto.DateTime.compare(end_of_time)
-
-    assert :lt = start_dt
+    assert :lt = r.publication_start
     |> Ecto.DateTime.compare(now)
 
-    assert :eq = Ecto.DateTime.to_date(start_dt)
+    assert :eq = r.publication_start
+    |> Ecto.DateTime.to_date
     |> Ecto.Date.compare(now_date)
+  end
+
+  @tag :integration
+  test "changeset with valid attributes inserts has publication end" do
+    r = test_insert
+
+    end_of_time = {{9999, 06, 01}, {0, 0, 0}}
+    |> Ecto.DateTime.from_erl
+
+    assert :eq = r.publication_end
+    |> Ecto.DateTime.compare(end_of_time)
+  end
+
+  @tag :integration
+  test "changeset with valid attributes inserts has version" do
+    r = test_insert
+
+    assert r.version == 1
+  end
+
+  defp test_insert do
+    changeset = Resource.changeset(%Resource{}, @valid_attrs)
+
+    assert {:ok, %Resource{id: id}} = Cordial.Repo.insert(changeset)
+
+    Cordial.Repo.get!(Resource, id)
   end
 end

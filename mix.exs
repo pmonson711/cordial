@@ -10,6 +10,7 @@ defmodule Cordial.Mixfile do
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      aliases: aliases,
+     test_coverage: [tool: ExCoveralls],
      deps: deps]
   end
 
@@ -37,7 +38,9 @@ defmodule Cordial.Mixfile do
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.9"},
      {:cowboy, "~> 1.0"},
-     {:credo, "~> 0.3", only: [:test, :dev]}]
+     {:credo, "~> 0.3", only: [:test, :dev]},
+     {:excoveralls, "~> 0.5", only: [:test]}
+    ]
   end
 
   # Aliases are shortcut or tasks specific to the current project.
