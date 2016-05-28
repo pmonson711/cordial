@@ -2,6 +2,7 @@ defmodule Cordial.Repo.Migrations.InsertDefaults do
   use Ecto.Migration
   require Cordial.Repo
   alias Cordial.Repo
+  import Ecto.Query
 
   def up do
     Repo.insert %Cordial.IdentityType{ id: 1, name: "system" }
@@ -30,6 +31,18 @@ defmodule Cordial.Repo.Migrations.InsertDefaults do
       modify :modified_by_id, :integer, null: true
       modify :category_id, :integer, null: true
     end
+
+    (from c in Cordial.Category,
+      select: fragment("setval(?, ?)", "category_id_seq", max(c.id)))
+      |> Repo.one!
+
+    (from c in Cordial.Resource,
+      select: fragment("setval(?, ?)", "resource_id_seq", max(c.id)))
+      |> Repo.one!
+
+    (from c in Cordial.Identity,
+      select: fragment("setval(?, ?)", "identity_id_seq", max(c.id)))
+      |> Repo.one!
   end
 
   def down do
