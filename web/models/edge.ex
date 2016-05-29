@@ -24,5 +24,10 @@ defmodule Cordial.Edge do
   def changeset(model, params \\ %{}) do
     model
     |> cast(params, @required_fields, @optional_fields)
+    |> foreign_key_constraint(:predicate_id)
+    |> foreign_key_constraint(:subject_id)
+    |> foreign_key_constraint(:object_id)
+    |> foreign_key_constraint(:inserted_by_id)
+    |> foreign_key_constraint(:modified_by_id)
   end
 end

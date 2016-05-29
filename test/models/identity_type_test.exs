@@ -3,7 +3,7 @@ defmodule Cordial.IdentityTypeTest do
 
   alias Cordial.IdentityType
 
-  @valid_attrs %{name: ""}
+  @valid_attrs %{name: "test"}
   @invalid_attrs %{}
 
   test "changeset with valid attributes" do
@@ -14,5 +14,12 @@ defmodule Cordial.IdentityTypeTest do
   test "changeset with invalid attributes" do
     changeset = IdentityType.changeset(%IdentityType{}, @invalid_attrs)
     refute changeset.valid?
+  end
+
+  @tag :integration
+  test "changeset can insert" do
+    changeset = IdentityType.changeset(%IdentityType{}, @valid_attrs)
+    assert {:ok, it} = Cordial.Repo.insert changeset
+    assert it.id >= 1
   end
 end

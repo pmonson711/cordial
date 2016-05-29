@@ -42,6 +42,7 @@ defmodule Cordial.CategoryTest do
     assert c.id > 1
   end
 
+  @tag :integration
   test "can create new with resource and insert" do
     rsc = %{name: "category_insert_test",
             inserted_by_id: 1,

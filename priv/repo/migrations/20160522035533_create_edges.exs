@@ -8,6 +8,7 @@ defmodule Cordial.Repo.Migrations.CreateEdges do
       add :object_id, references(:resource), null: false
       add :inserted_by_id, references(:identity), null: false
       add :modified_by_id, references(:identity), null: false
+      timestamps
     end
 
     create index(:edge, [:object_id, :predicate_id, :subject_id], unique: true)

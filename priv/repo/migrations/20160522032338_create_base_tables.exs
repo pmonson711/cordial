@@ -26,7 +26,7 @@ defmodule Cordial.Repo.Migrations.CreateBaseTables do
     create table(:identity) do
       add :resource_id, references(:resource), null: false
       add :verification_key, :binary
-      add :type_id, references(:identity_type), null: false
+      add :identity_type_id, references(:identity_type), null: false
       add :is_verified, :boolean, default: false, null: false
       add :is_unique, :boolean, default: false, null: false
       timestamps

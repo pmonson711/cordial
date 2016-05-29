@@ -8,10 +8,10 @@ defmodule Cordial.Repo.Migrations.InsertDefaults do
     Repo.insert %Cordial.IdentityType{ id: 1, name: "system" }
 
     Repo.insert %Cordial.Resource{ id: 1, name: "admin" }
-    Repo.insert %Cordial.Identity { id: 1, resource_id: 1, type_id: 1 }
+    Repo.insert %Cordial.Identity { id: 1, resource_id: 1, identity_type_id: 1 }
 
     Repo.insert %Cordial.Resource{ id: 2, name: "world" }
-    Repo.insert %Cordial.Identity { id: 2, resource_id: 2, type_id: 1 }
+    Repo.insert %Cordial.Identity { id: 2, resource_id: 2, identity_type_id: 1 }
 
     Repo.insert %Cordial.Resource{ id: 3, name: "meta" }
     Repo.insert %Cordial.Category{ id: 1, resource_id: 3, parent_id: 1 }
@@ -36,12 +36,16 @@ defmodule Cordial.Repo.Migrations.InsertDefaults do
       select: fragment("setval(?, ?)", "category_id_seq", max(c.id)))
       |> Repo.one!
 
-    (from c in Cordial.Resource,
-      select: fragment("setval(?, ?)", "resource_id_seq", max(c.id)))
+    (from r in Cordial.Resource,
+      select: fragment("setval(?, ?)", "resource_id_seq", max(r.id)))
       |> Repo.one!
 
-    (from c in Cordial.Identity,
-      select: fragment("setval(?, ?)", "identity_id_seq", max(c.id)))
+    (from i in Cordial.Identity,
+      select: fragment("setval(?, ?)", "identity_id_seq", max(i.id)))
+      |> Repo.one!
+
+    (from it in Cordial.IdentityType,
+      select: fragment("setval(?, ?)", "identity_type_id_seq", max(it.id)))
       |> Repo.one!
   end
 
