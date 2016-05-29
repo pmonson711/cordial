@@ -52,6 +52,7 @@ defmodule Cordial.Mixfile do
   defp aliases do
     ["ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
      "ecto.reset": ["ecto.drop", "ecto.setup"],
+     "test.rebuild": ["ecto.drop", "ecto.create", "ecto.migrate", "test"],
      "test": ["ecto.create --quite", "ecto.migrate", "test"]]
   end
 end

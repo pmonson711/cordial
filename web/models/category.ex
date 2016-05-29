@@ -1,6 +1,7 @@
 defmodule Cordial.Category do
   use Cordial.Web, :model
   alias Cordial.Resource
+  alias Ecto.Multi
 
   schema "category" do
     belongs_to :resource, Resource
@@ -21,8 +22,18 @@ defmodule Cordial.Category do
   def changeset(model, params \\ %{}) do
     model
     |> cast(params, @required_fields, @optional_fields)
-    |> unique_constraint(:category)
     |> foreign_key_constraint(:parent_id)
     |> foreign_key_constraint(:resource_id)
+  end
+
+  def new(model, params \\ %{}) do
+    Multi.new
+    |> Multi.insert(:resource, Cordial.Resource.changeset(%Cordial.Resource{}, params.resource))
+    |> Multi.insert(:category, fn resource_inserted ->
+      case resource_inserted do
+        %{resource: %{id: id}} ->
+          Cordial.Category.changeset(model, Map.put(params, :resource_id, id))
+      end
+    end)
   end
 end
