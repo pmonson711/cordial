@@ -1,6 +1,7 @@
 defmodule Cordial.Category do
   use Cordial.Web, :model
   alias Cordial.Resource
+  alias Cordial.Category
   alias Ecto.Multi
 
   schema "category" do
@@ -28,11 +29,11 @@ defmodule Cordial.Category do
 
   def new(model, params \\ %{}) do
     Multi.new
-    |> Multi.insert(:resource, Cordial.Resource.changeset(%Cordial.Resource{}, params.resource))
+    |> Multi.insert(:resource, Resource.changeset(%Resource{}, params.resource))
     |> Multi.insert(:category, fn resource_inserted ->
       case resource_inserted do
         %{resource: %{id: id}} ->
-          Cordial.Category.changeset(model, Map.put(params, :resource_id, id))
+          Category.changeset(model, Map.put(params, :resource_id, id))
       end
     end)
   end

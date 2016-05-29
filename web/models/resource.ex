@@ -19,7 +19,8 @@ defmodule Cordial.Resource do
   end
 
   @required_fields ~w(name inserted_by_id modified_by_id category_id)
-  @optional_fields ~w(is_authoritative is_protected publication_start publication_end version)
+  @optional_fields ~w(is_authoritative is_protected publication_start
+    publication_end version)
 
   @doc """
   Creates a changeset based on the `model` and `params`.
