@@ -44,7 +44,11 @@ defmodule Cordial.ResourceTest do
     now_date = now
     |> Ecto.DateTime.to_date
 
-    assert :lt = r.publication_start
+    # The `to_erl |> from_erl` conversion is used to drop
+    # precision to match erlangs time spec
+    assert :eq = r.publication_start
+    |> Ecto.DateTime.to_erl
+    |> Ecto.DateTime.from_erl
     |> Ecto.DateTime.compare(now)
 
     assert :eq = r.publication_start

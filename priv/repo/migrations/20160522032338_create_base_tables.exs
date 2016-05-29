@@ -6,7 +6,7 @@ defmodule Cordial.Repo.Migrations.CreateBaseTables do
       add :name, :string, null: false
       add :is_authoritative, :boolean, default: false, null: false
       add :is_protected, :boolean, default: false, null: false
-      add :publication_start, :datetime, default: fragment("now()")
+      add :publication_start, :datetime, default: fragment("(now() at time zone 'UTC')")
       add :publication_end, :datetime, default: fragment("'9999-06-01 00:00:00'::timestamp")
       add :version, :integer, default: 1, null: false
       timestamps
