@@ -1,9 +1,9 @@
-defmodule Cordial.Resource do
+defmodule Cordial.Rsc do
   use Cordial.Web, :model
   alias Cordial.Identity
   alias Cordial.Category
 
-  schema "resource" do
+  schema "rsc" do
     field :name
     field :is_authoritative, :boolean, default: false
     field :is_protected, :boolean, default: false

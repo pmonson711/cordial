@@ -3,7 +3,7 @@ defmodule Cordial.CategoryTest do
 
   alias Cordial.Category
 
-  @valid_attrs %{resource_id: 1, parent_id: 1}
+  @valid_attrs %{rsc_id: 1, parent_id: 1}
   @invalid_attrs %{}
 
   test "changeset with valid attributes" do
@@ -16,22 +16,22 @@ defmodule Cordial.CategoryTest do
     refute changeset.valid?
   end
 
-  test "can create new with resource" do
+  test "can create new with rsc" do
     rsc = %{name: "category_insert_test",
             inserted_by_id: 1,
             modified_by_id: 1,
             category_id: 2}
     category = %{parent_id: 2,
-                 resource: rsc}
+                 rsc: rsc}
     multi = Category.new %Category{}, category
 
     assert [
-      {:resource, {:insert, resource_changeset, []}},
+      {:rsc, {:insert, rsc_changeset, []}},
       {:category, {:changeset_fun, :insert, category_changesetfun, []}}
     ] = Ecto.Multi.to_list(multi)
 
-    assert resource_changeset.valid?
-    assert %Ecto.Changeset{changes: %{parent_id: 2, resource_id: 1}} = category_changesetfun.(%{resource: %{id: 1}})
+    assert rsc_changeset.valid?
+    assert %Ecto.Changeset{changes: %{parent_id: 2, rsc_id: 1}} = category_changesetfun.(%{rsc: %{id: 1}})
   end
 
   @tag :integration
@@ -43,16 +43,16 @@ defmodule Cordial.CategoryTest do
   end
 
   @tag :integration
-  test "can create new with resource and insert" do
+  test "can create new with rsc and insert" do
     rsc = %{name: "category_insert_test",
             inserted_by_id: 1,
             modified_by_id: 1,
             category_id: 2}
     category = %{parent_id: 2,
-                 resource: rsc}
+                 rsc: rsc}
 
-    assert {:ok, %{category: i_cat, resource: i_rsc}} = Cordial.Repo.transaction Category.new(%Category{}, category)
+    assert {:ok, %{category: i_cat, rsc: i_rsc}} = Cordial.Repo.transaction Category.new(%Category{}, category)
 
-    assert i_cat.resource_id == i_rsc.id
+    assert i_cat.rsc_id == i_rsc.id
   end
 end

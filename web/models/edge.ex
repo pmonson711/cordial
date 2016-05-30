@@ -1,12 +1,12 @@
 defmodule Cordial.Edge do
   use Cordial.Web, :model
-  alias Cordial.Resource
+  alias Cordial.Rsc
   alias Cordial.Identity
 
   schema "edge" do
-    belongs_to :subject, Resource
-    belongs_to :predicate, Resource
-    belongs_to :object, Resource
+    belongs_to :subject, Rsc
+    belongs_to :predicate, Rsc
+    belongs_to :object, Rsc
     belongs_to :inserted_by, Identity
     belongs_to :modified_by, Identity
     timestamps

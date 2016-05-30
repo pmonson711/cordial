@@ -19,8 +19,14 @@ defmodule Cordial.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {Cordial, []},
-     applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex]]
+     applications: applications(Mix.env)]
+  end
+  defp applications(:test) do
+    applications(:all) ++ [:blacksmith]
+  end
+  defp applications(_all) do
+    [:phoenix, :phoenix_html, :cowboy, :logger, :gettext, :phoenix_ecto,
+     :postgrex, :ex_admin]
   end
 
   # Specifies which paths to compile per environment.
@@ -38,7 +44,9 @@ defmodule Cordial.Mixfile do
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.9"},
      {:cowboy, "~> 1.0"},
-     {:credo, "~> 0.3", only: [:test, :dev]},
+     {:blacksmith, "~> 0.1"},
+     {:ex_admin, github: "smpallen99/ex_admin"},
+     {:credo, "~> 0.3": [:test, :dev]},
      {:excoveralls, "~> 0.5", only: [:test]}
     ]
   end

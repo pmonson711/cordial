@@ -1,16 +1,16 @@
 defmodule Cordial.Identity do
   use Cordial.Web, :model
-  alias Cordial.Resource
+  alias Cordial.Rsc
   alias Cordial.IdentityType
 
   schema "identity" do
-    belongs_to :resource, Resource
+    belongs_to :rsc, Rsc
     belongs_to :identity_type, IdentityType
 
     timestamps
   end
 
-  @required_fields ~w(resource_id identity_type_id)
+  @required_fields ~w(rsc_id identity_type_id)
   @optional_fields ~w()
 
   @doc """
@@ -22,7 +22,7 @@ defmodule Cordial.Identity do
   def changeset(model, params \\ %{}) do
     model
     |> cast(params, @required_fields, @optional_fields)
-    |> foreign_key_constraint(:resource_id)
+    |> foreign_key_constraint(:rsc_id)
     |> foreign_key_constraint(:identity_type_id)
   end
 end

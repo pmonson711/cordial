@@ -2,7 +2,7 @@ defmodule Cordial.Repo.Migrations.CreateBaseTables do
   use Ecto.Migration
 
   def up do
-    create table(:resource) do
+    create table(:rsc) do
       add :name, :string, null: false
       add :is_authoritative, :boolean, default: false, null: false
       add :is_protected, :boolean, default: false, null: false
@@ -13,7 +13,7 @@ defmodule Cordial.Repo.Migrations.CreateBaseTables do
     end
 
     create table(:category) do
-      add :resource_id, references(:resource), null: false
+      add :rsc_id, references(:rsc), null: false
       add :parent_id, references(:category), null: false
       timestamps
     end
@@ -24,7 +24,7 @@ defmodule Cordial.Repo.Migrations.CreateBaseTables do
     end
 
     create table(:identity) do
-      add :resource_id, references(:resource), null: false
+      add :rsc_id, references(:rsc), null: false
       add :verification_key, :binary
       add :identity_type_id, references(:identity_type), null: false
       add :is_verified, :boolean, default: false, null: false
@@ -32,18 +32,18 @@ defmodule Cordial.Repo.Migrations.CreateBaseTables do
       timestamps
     end
 
-    alter table(:resource) do
+    alter table(:rsc) do
       add :visible_for_id, references(:identity), null: true
       add :inserted_by_id, references(:identity), null: true
       add :modified_by_id, references(:identity), null: true
       add :category_id, references(:category), null: true
     end
 
-    create index(:resource, [:category_id, :name], unique: true)
+    create index(:rsc, [:category_id, :name], unique: true)
   end
 
   def down do
-    alter table(:resource) do
+    alter table(:rsc) do
       remove :visible_for_id
       remove :inserted_by_id
       remove :modified_by_id
@@ -51,11 +51,11 @@ defmodule Cordial.Repo.Migrations.CreateBaseTables do
     end
 
     alter table(:identity) do
-      remove :resource_id
+      remove :rsc_id
     end
 
     drop table(:category)
-    drop table(:resource)
+    drop table(:rsc)
     drop table(:identity)
     drop table(:identity_type)
   end

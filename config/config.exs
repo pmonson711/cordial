@@ -29,3 +29,17 @@ import_config "#{Mix.env}.exs"
 config :phoenix, :generators,
   migration: true,
   binary_id: false
+
+config :xain, :after_callback, {Phoenix.HTML, :raw}
+
+config :ex_admin,
+  repo: Cordial.Repo,
+  module: Cordial,
+  modules: [
+    Cordial.ExAdmin.Dashboard,
+    Cordial.ExAdmin.Rsc,
+    Cordial.ExAdmin.Identity,
+    Cordial.ExAdmin.IdentityType,
+    Cordial.ExAdmin.Category,
+    Cordial.ExAdmin.Edge,
+  ]
