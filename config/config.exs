@@ -41,5 +41,5 @@ config :ex_admin,
     Cordial.ExAdmin.Identity,
     Cordial.ExAdmin.IdentityType,
     Cordial.ExAdmin.Category,
-    Cordial.ExAdmin.Edge,
+    Cordial.ExAdmin.Edge
   ]
