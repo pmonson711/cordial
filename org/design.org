@@ -1,0 +1,50 @@
+#+TITLE: Design of Cordial
+#+AUTHOR: Paul Monson
+#+EMAIL pmonson711@gmail.com
+#+TODO: TODO NEXT STARTED | DONE DEFERRED
+
+* Overview
+
+* Design
+
+** Access Control
+#+BEGIN_SRC ditaa :file diagrams/authentication.png :export png
+  +----------------------------------------------------------------------------+
+  | Identity                                                                   |
+  +----------------------------------------------------------------------------+
+    belongs to a       belongs to zero or many
+  +----------------+  +-----------------------+
+  | Identity Type  |  | Role                  |
+  +----------------+  +-----------------------+
+   identifies source   is a                     has zero or many
+                      +-----------------------+ +---------------------+
+                      | Category              | | Permission          |
+                      +-----------------------+ +---------------------+
+                                                Is a
+                                                +----------------------+
+                                                | Resource             |
+                                                +----------------------+
+
+  -----------------------------------------------------------------------------
+
+  +----------------------------------------------------------------------------+
+  | Notifications                                                              |
+  +----------------------------------------------------------------------------+
+                                 Publishes Request on
+                                +---------------------------------------+
+                                | ACL                                   |
+                                +---------------------------------------+
+                                 if basic            if advanced
+                                 (first granted)     (all granted)
+                                +-----------------+ +-------------------+
+                                | Permited        | | Permited          |
+                                +-----------------+ +-------------------+
+                                 else                else
+                                +-----------------+ +-------------------+
+                                | Denied          | | Denied            |
+                                +-----------------+ +-------------------+
+
+#+END_SRC
+
+#+RESULTS:
+[[file:diagrams/authentication.png]]

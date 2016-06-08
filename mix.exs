@@ -26,7 +26,7 @@ defmodule Cordial.Mixfile do
   end
   defp applications(_all) do
     [:phoenix, :phoenix_html, :cowboy, :logger, :gettext, :phoenix_ecto,
-     :postgrex, :ex_admin]
+     :postgrex, :ex_admin, :phoenix_pubsub]
   end
 
   # Specifies which paths to compile per environment.
@@ -37,16 +37,21 @@ defmodule Cordial.Mixfile do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    [{:phoenix, "~> 1.1.4"},
+    [
+     {:phoenix, "~> 1.2.0-rc.1", override: true},
      {:postgrex, ">= 0.0.0"},
-     {:phoenix_ecto, "~> 3.0.0-rc.0"},
-     {:phoenix_html, "~> 2.4"},
-     {:phoenix_live_reload, "~> 1.0", only: :dev},
+     {:phoenix_ecto, "~> 3.0.0-rc"},
+     {:phoenix_pubsub, "~> 1.0.0-rc"},
+     {:phoenix_html, "~> 2.5"},
      {:gettext, "~> 0.9"},
      {:cowboy, "~> 1.0"},
      {:blacksmith, "~> 0.1"},
      {:ex_admin, github: "smpallen99/ex_admin"},
-     {:credo, "~> 0.3": [:test, :dev]},
+     {:earmark, "~> 0.2"},
+     {:phoenix_live_reload, "~> 1.0", only: :dev},
+     {:dialyze, "~> 0.2.0", only: :dev},
+     {:ex_doc, "~> 0.11", only: :dev},
+     {:credo, "~> 0.3", only: [:test, :dev]},
      {:excoveralls, "~> 0.5", only: [:test]}
     ]
   end

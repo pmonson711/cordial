@@ -23,7 +23,10 @@ defmodule Cordial.Repo.Migrations.InsertDefaults do
     Repo.insert %Cordial.Category{ id: 3, rsc_id: 5, parent_id: 3 }
 
 
-    Repo.update_all( Cordial.Rsc, set: [visible_for_id: 2, inserted_by_id: 1, modified_by_id: 1, category_id: 2])
+    Repo.update_all( Cordial.Rsc, set: [visible_for_id: 2, inserted_by_id: 1,
+                                        modified_by_id: 1, category_id: 2,
+                                        is_protected: true,
+                                        is_authoritative: true])
 
     alter table(:rsc) do
       modify :visible_for_id, :integer, null: true

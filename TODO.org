@@ -1,0 +1,23 @@
+#+AUTHOR: Paul Monson
+#+EMAIL pmonson711@gmail.com
+#+TODO: TODO(t) NEXT(n) STARTED(s) | DONE(d) DEFERRED(f)
+
+* Todos
+** TODO  Update the tests to use blacksmith      <2016-06-01 Wed 06:43>
+ 
+ Link: file:~/src/cordial/mix.exs::{:phoenix_pubsub,%20"~>%201.0.0-rc"},
+** TODO  Integrate sential for authentication, integrate with identity storage      <2016-06-01 Wed 06:43>
+ 
+ Link: file:~/src/cordial/mix.exs::{:phoenix_pubsub,%20"~>%201.0.0-rc"},
+** TODO  Test out the Bamboo email library      <2016-06-01 Wed 06:44>
+ 
+ Link: file:~/src/cordial/mix.exs::defp%20applications(_all)%20do
+** TODO  Implement or extract the zotonic deps cache      <2016-06-01 Wed 06:49>
+ 
+ Link: file:~/src/cordial/README.md::*%20Source:%20https://github.com/phoenixframework/phoenix
+** TODO  Add .editorconfig to cordial for default spacing controls      <2016-06-01 Wed 06:57>
+ 
+ Link: file:~/src/cordial/README.md
+** TODO  integrate ua_classifier      <2016-06-01 Wed 07:01>
+
+See https://libraries.io/hex/ua_classifier

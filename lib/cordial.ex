@@ -12,6 +12,7 @@ defmodule Cordial do
       supervisor(Cordial.Endpoint, []),
       # Start the Ecto repository
       supervisor(Cordial.Repo, []),
+      worker(Cordial.Notification, []),
       # Here you could define other workers and supervisors as children
       # worker(Cordial.Worker, [arg1, arg2, arg3]),
     ]
