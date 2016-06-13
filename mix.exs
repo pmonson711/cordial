@@ -52,7 +52,7 @@ defmodule Cordial.Mixfile do
      {:dialyze, "~> 0.2.0", only: :dev},
      {:ex_doc, "~> 0.11", only: :dev},
      {:credo, "~> 0.3", only: [:test, :dev]},
-     {:excoveralls, "~> 0.5", only: [:test]}
+     {:excoveralls, "~> 0.5", only: [:test, :dev]}
     ]
   end
 
@@ -66,6 +66,6 @@ defmodule Cordial.Mixfile do
     ["ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
      "ecto.reset": ["ecto.drop", "ecto.setup"],
      "test.rebuild": ["ecto.drop", "ecto.create", "ecto.migrate", "test"],
-     "test": ["ecto.create --quite", "ecto.migrate", "credo --strict --ignore-checks 'moduledoc'", "test"]]
+     "test": ["ecto.create --quite", "ecto.migrate", "credo --strict --ignore-checks moduledoc,inspect", "test"]]
   end
 end

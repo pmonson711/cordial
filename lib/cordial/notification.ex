@@ -120,7 +120,7 @@ defmodule Cordial.Notification do
   def handle_call({:remove_handler, topic, handler, args}, _from,
         %{managers: managers} = state) do
     managers
-    |> Map.has_key?(topic)
+    |> Map.get(topic)
     |> GenEvent.remove_handler(handler, args)
     Logger.info "Now **NOT** handling #{topic} with #{inspect(handler)}"
     {:reply, :ok, state}
