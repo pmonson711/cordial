@@ -133,11 +133,11 @@ defmodule Cordial.Notification do
   def handle_call({:map, topic, message}, _from, %{managers: managers} = state) do
     manager = Map.get(managers, topic)
 
+    fun = transform_genevent_call(:map, manager, topic, message)
+
     resp = manager
     |> GenEvent.which_handlers
-    |> Enum.map(fn(handler) ->
-      GenEvent.call(manager, handler, {topic, message})
-    end)
+    |> Enum.reduce_while([], fun)
 
     {:reply, resp, state}
   end
@@ -146,9 +146,11 @@ defmodule Cordial.Notification do
         %{managers: managers} = state) do
     manager = Map.get(managers, topic)
 
+    rfun = transform_genevent_call(:foldl, manager, topic, message)
+
     resp = manager
     |> GenEvent.which_handlers
-    |> Enum.reduce_while([], transform_genevent_call(manager, topic, message))
+    |> Enum.reduce_while([], rfun)
     |> List.foldl(acc, fun)
 
     {:reply, resp, state}
@@ -158,10 +160,12 @@ defmodule Cordial.Notification do
         %{managers: managers} = state) do
     manager = Map.get(managers, topic)
 
+    rfun = transform_genevent_call(:foldr, manager, topic, message)
+
     resp = manager
     |> GenEvent.which_handlers
     |> Enum.reverse
-    |> Enum.reduce_while([], transform_genevent_call(manager, topic, message))
+    |> Enum.reduce_while([], rfun)
     |> List.foldl(acc, fun)
 
     {:reply, resp, state}
@@ -172,7 +176,7 @@ defmodule Cordial.Notification do
         %{managers: managers} = state) do
     manager = Map.get(managers, topic)
 
-    fun = transform_genevent_call_first(manager, topic, message)
+    fun = transform_genevent_call_first(:first, manager, topic, message)
 
     resp = manager
     |> GenEvent.which_handlers
@@ -186,7 +190,7 @@ defmodule Cordial.Notification do
         %{managers: managers} = state) do
     manager = Map.get(managers, topic)
 
-    fun = transform_genevent_call_first(manager, topic, message)
+    fun = transform_genevent_call_first(:last, manager, topic, message)
 
     resp = manager
     |> GenEvent.which_handlers
@@ -205,14 +209,14 @@ defmodule Cordial.Notification do
     {:noreply, state}
   end
 
-  defp transform_genevent_call_first(manager, topic, message) do
+  defp transform_genevent_call_first(call, manager, topic, message) do
     fn(handler, _acc) ->
       case GenEvent.call(manager, handler, {topic, message}) do
         {:halt, _value} ->
-          log_info(:halt, message, topic, manager, handler)
+          log_info(call, message, topic, manager, handler)
           {:cont, []}
         {:error, _value} ->
-          log_error(:error, message, topic, manager, handler)
+          log_error(call, message, topic, manager, handler)
           {:cont, []}
         {:ok, value}     -> {:halt, value}
         value            -> {:halt, value}
@@ -220,14 +224,14 @@ defmodule Cordial.Notification do
     end
   end
 
-  defp transform_genevent_call(manager, topic, message) do
+  defp transform_genevent_call(call, manager, topic, message) do
     fn(handler, trans_acc) ->
       case GenEvent.call(manager, handler, {topic, message}) do
         {:halt, _value} ->
-          log_info(:halt, message, topic, manager, handler)
+          log_info(call, message, topic, manager, handler)
           {:halt, trans_acc}
-        {:error, value} ->
-          log_error(:error, message, topic, manager, handler)
+        {:error, _value} ->
+          log_error(call, message, topic, manager, handler)
           {:cont, trans_acc}
         {:ok, value}     -> {:cont, [value|trans_acc]}
         value            -> {:cont, [value|trans_acc]}
