@@ -81,23 +81,26 @@ defmodule Cordial.Notification do
     GenServer.call(__MODULE__, {:first, topic, body})
   end
 
+  @doc "Calls the first handlers of the topic"
+  def last(topic, body) do
+    GenServer.call(__MODULE__, {:last, topic, body})
+  end
+
   @doc "Calls the all handlers of the topic"
   def map(topic, body) do
     GenServer.call(__MODULE__, {:map, topic, body})
   end
 
   @doc "Calls the all handlers of the topic, allowing for folding the results"
-  def foldl(topic, body, {acc, fun}) do
+  def foldl(topic, body, {_acc, _fun} = fun_state) do
     __MODULE__
-    |> GenServer.call({:map, topic, body})
-    |> List.foldl(acc, fun)
+    |> GenServer.call({:foldl, topic, body, fun_state})
   end
 
   @doc "Calls the all handlers of the topic, allowing for folding the results"
-  def foldr(topic, body, {acc, fun}) do
+  def foldr(topic, body, {_acc, _fun} = fun_state) do
     __MODULE__
-    |> GenServer.call({:map, topic, body})
-    |> List.foldr(acc, fun)
+    |> GenServer.call({:foldr, topic, body, fun_state})
   end
 
   @doc false
@@ -113,7 +116,7 @@ defmodule Cordial.Notification do
     end
     :ok = GenEvent.add_mon_handler(manager, handler, args)
     Logger.info "Now handling #{topic} with #{inspect(handler)}"
-    {:reply, :ok, %{state | managers: managers}}
+    {:reply, {:ok, manager}, %{state | managers: managers}}
   end
 
   @doc false
@@ -139,16 +142,56 @@ defmodule Cordial.Notification do
     {:reply, resp, state}
   end
 
+  def handle_call({:foldl, topic, message, {acc, fun}}, _from,
+        %{managers: managers} = state) do
+    manager = Map.get(managers, topic)
+
+    resp = manager
+    |> GenEvent.which_handlers
+    |> Enum.reduce_while([], transform_genevent_call(manager, topic, message))
+    |> List.foldl(acc, fun)
+
+    {:reply, resp, state}
+  end
+
+  def handle_call({:foldr, topic, message, {acc, fun}}, _from,
+        %{managers: managers} = state) do
+    manager = Map.get(managers, topic)
+
+    resp = manager
+    |> GenEvent.which_handlers
+    |> Enum.reverse
+    |> Enum.reduce_while([], transform_genevent_call(manager, topic, message))
+    |> List.foldl(acc, fun)
+
+    {:reply, resp, state}
+  end
+
   @doc false
   def handle_call({:first, topic, message}, _from,
         %{managers: managers} = state) do
     manager = Map.get(managers, topic)
 
-    handler = manager
-    |> GenEvent.which_handlers
-    |> List.first
+    fun = transform_genevent_call_first(manager, topic, message)
 
-    resp = GenEvent.call(manager, handler, {topic, message})
+    resp = manager
+    |> GenEvent.which_handlers
+    |> Enum.reduce_while([], fun)
+
+    {:reply, resp, state}
+  end
+
+  @doc false
+  def handle_call({:last, topic, message}, _from,
+        %{managers: managers} = state) do
+    manager = Map.get(managers, topic)
+
+    fun = transform_genevent_call_first(manager, topic, message)
+
+    resp = manager
+    |> GenEvent.which_handlers
+    |> Enum.reverse
+    |> Enum.reduce_while([], fun)
 
     {:reply, resp, state}
   end
@@ -160,5 +203,51 @@ defmodule Cordial.Notification do
     |> GenEvent.ack_notify({topic, message})
 
     {:noreply, state}
+  end
+
+  defp transform_genevent_call_first(manager, topic, message) do
+    fn(handler, _acc) ->
+      case GenEvent.call(manager, handler, {topic, message}) do
+        {:halt, _value} ->
+          log_info(:halt, message, topic, manager, handler)
+          {:cont, []}
+        {:error, _value} ->
+          log_error(:error, message, topic, manager, handler)
+          {:cont, []}
+        {:ok, value}     -> {:halt, value}
+        value            -> {:halt, value}
+      end
+    end
+  end
+
+  defp transform_genevent_call(manager, topic, message) do
+    fn(handler, trans_acc) ->
+      case GenEvent.call(manager, handler, {topic, message}) do
+        {:halt, _value} ->
+          log_info(:halt, message, topic, manager, handler)
+          {:halt, trans_acc}
+        {:error, value} ->
+          log_error(:error, message, topic, manager, handler)
+          {:cont, trans_acc}
+        {:ok, value}     -> {:cont, [value|trans_acc]}
+        value            -> {:cont, [value|trans_acc]}
+      end
+    end
+  end
+
+  defp log_error(call_type, message, topic, manager, handler) do
+    str1 = "[#{call_type}] :error"
+    str2 = "value #{inspect message}"
+    str3 = "handed to #{inspect handler}"
+    str4 = "for #{topic} on #{manager}"
+    Logger.error "#{str1} #{str2} #{str3} #{str4}"
+  end
+
+  defp log_info(call_type, message, topic, manager, handler) do
+    str1 = "[#{call_type}] :halt"
+    str2 = "value #{inspect message}"
+    str3 = "handed to #{inspect handler}"
+    str4 = "for #{topic} on #{manager}"
+    Logger.info "#{str1} #{str2} #{str3} #{str4}"
   end
 end

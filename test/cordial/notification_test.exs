@@ -1,6 +1,5 @@
 defmodule Cordial.NotificationTest do
   use ExUnit.Case, async: true
-  import ExUnit.CaptureLog
   alias Cordial.Notification
 
   @val %{i: :log}
@@ -38,10 +37,11 @@ defmodule Cordial.NotificationTest do
 
   setup_all do
     Notification.add_handler(:test, TestReceiverOne)
+    :ok
   end
 
   test "Can add and remove handler" do
-    assert :ok = Notification.add_handler(:test_setup, TestReceiverOne)
+    assert {:ok, _pid} = Notification.add_handler(:test_setup, TestReceiverOne)
     assert :ok = Notification.remove_handler(:test_setup, TestReceiverOne)
   end
 
@@ -54,17 +54,16 @@ defmodule Cordial.NotificationTest do
   end
 
   test "Can fold" do
-    fun = fn({:expected_response, input: {:test, x}}, a) ->
-      [x|a]
-    end
-    assert [@val] = Notification.foldl(:test, @val, {[], fun})
-    assert [@val] = Notification.foldr(:test, @val, {[], fun})
+    fun = fn(@expected_response = x, a) -> [x|a] end
+    assert [@expected_response] = Notification.foldl(:test, @val, {[], fun})
+    assert [@expected_response] = Notification.foldr(:test, @val, {[], fun})
   end
 
   test "Can only call one" do
     assert @expected_response = Notification.first(:test, @val)
-    assert :ok = Notification.add_handler(:test, TestReceiverTwo)
+    assert {:ok, _pid} = Notification.add_handler(:test, TestReceiverTwo)
     assert @expected_response = Notification.first(:test, @val)
+    assert @expected_response = Notification.last(:test, @val)
     assert :ok = Notification.remove_handler(:test, TestReceiverTwo)
   end
 end
