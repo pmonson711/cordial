@@ -50,6 +50,7 @@ defmodule Cordial.Notification do
   """
   use GenServer
   require Logger
+  alias Cordial.Notification.Logger, as: NLogger
 
   @doc false
   def start_link(opts \\ []) do
@@ -62,56 +63,108 @@ defmodule Cordial.Notification do
   end
 
   @doc "Adds a handler to a topic"
-  def add_handler(topic, handler, args \\ []) do
+  @spec add_handler(module, atom, term) :: :ok
+  def add_handler(handler, topic, args \\ []) do
     GenServer.call(__MODULE__, {:add_handler, topic, handler, args})
   end
 
   @doc "Removes a handler to a topic"
-  def remove_handler(topic, handler, args \\ []) do
+  @spec remove_handler(module, atom, term) :: :ok
+  def remove_handler(handler, topic, args \\ []) do
     GenServer.call(__MODULE__, {:remove_handler, topic, handler, args})
   end
 
   @doc "Notifies all handlers of the topic"
-  def notify(topic, body) do
+  @spec notify(term, atom) :: :ok
+  def notify(body, topic) do
     GenServer.cast(__MODULE__, {:notify, topic, body})
   end
 
   @doc "Calls the first handlers of the topic"
-  def first(topic, body) do
+  @spec first(term, atom) :: term
+  def first(body, topic) do
     GenServer.call(__MODULE__, {:first, topic, body})
   end
 
-  @doc "Calls the first handlers of the topic"
-  def last(topic, body) do
+  @doc "Calls the last handlers of the topic"
+  @spec last(term, atom) :: term
+  def last(body, topic) do
     GenServer.call(__MODULE__, {:last, topic, body})
   end
 
   @doc "Calls the all handlers of the topic"
-  def map(topic, body) do
+  @spec map(term, atom) :: [term]
+  def map(body, topic) do
     GenServer.call(__MODULE__, {:map, topic, body})
   end
 
+  @spec foldl(
+    term, atom,
+    {a, (b, a -> {:cont, a} | {:halt, a})}
+  ) ::
+  term
+  when a: term, b: term
   @doc "Calls the all handlers of the topic, allowing for folding the results"
-  def foldl(topic, body, {_acc, _fun} = fun_state) do
+  def foldl(body, topic, {_acc, _fun} = fun_state) do
     __MODULE__
     |> GenServer.call({:foldl, topic, body, fun_state})
   end
 
+  def foldl(body, topic, acc) do
+    __MODULE__
+    |> GenServer.call({:foldl, topic, body, {acc, fn _old, new -> new end}})
+  end
+
+  @spec foldr(
+    term, atom,
+    {a, (b, a -> {:cont, a} | {:halt, a})}
+  ) :: term
+  when a: term, b: term
   @doc "Calls the all handlers of the topic, allowing for folding the results"
-  def foldr(topic, body, {_acc, _fun} = fun_state) do
+  def foldr(body, topic, {_acc, _fun} = fun_state) do
     __MODULE__
     |> GenServer.call({:foldr, topic, body, fun_state})
+  end
+
+  def foldr(body, topic, acc) do
+    __MODULE__
+    |> GenServer.call({:foldr, topic, body, {acc, fn _old, new -> new end}})
+  end
+
+  @doc "Maps a notification response to a GenEvent response."
+  @spec map_response(
+    :ok |
+    :ignore |
+    {:ok, term} |
+    {:halt, term} |
+    {:error, term},
+    term)
+  ::
+  {:ok, {:ok, nil}, term} |
+  {:ok, {:ignore, [], term}} |
+  {:ok, {:halt, term, term}} |
+  {:error, {:error, term}, term}
+
+  def map_response(response, state \\ []) do
+    case response do
+      :ok -> {:ok, {:ok, nil}, state}
+      :ignore -> {:ok, {:ignore, []}, state}
+      {:ok, val} -> {:ok, {:ok, val}, state}
+      {:halt, val} -> {:ok, {:halt, val}, state}
+      {:error, val} -> {:error, {:error, val}, state}
+    end
   end
 
   @doc false
   def handle_call({:add_handler, topic, handler, args}, _from,
         %{managers: managers} = state) do
+    new = false
     manager = if Map.has_key?(managers, topic) do
       Map.get(managers, topic)
     else
       {:ok, pid} = GenEvent.start_link([])
-      Logger.info "Now managing #{topic} on #{inspect(pid)}"
       managers = Map.put(managers, topic, pid)
+      __MODULE__.notify({topic, pid}, :notification_add_topic)
       pid
     end
     :ok = GenEvent.add_mon_handler(manager, handler, args)
@@ -142,6 +195,7 @@ defmodule Cordial.Notification do
     {:reply, resp, state}
   end
 
+  @doc false
   def handle_call({:foldl, topic, message, {acc, fun}}, _from,
         %{managers: managers} = state) do
     manager = Map.get(managers, topic)
@@ -156,6 +210,7 @@ defmodule Cordial.Notification do
     {:reply, resp, state}
   end
 
+  @doc false
   def handle_call({:foldr, topic, message, {acc, fun}}, _from,
         %{managers: managers} = state) do
     manager = Map.get(managers, topic)
@@ -174,15 +229,17 @@ defmodule Cordial.Notification do
   @doc false
   def handle_call({:first, topic, message}, _from,
         %{managers: managers} = state) do
-    manager = Map.get(managers, topic)
+    case Map.get(managers, topic) do
+      :nil -> {:reply, :nil, state}
+      manager ->
+        fun = transform_genevent_call_first(:first, manager, topic, message)
 
-    fun = transform_genevent_call_first(:first, manager, topic, message)
+        resp = manager
+        |> GenEvent.which_handlers
+        |> Enum.reduce_while([], fun)
 
-    resp = manager
-    |> GenEvent.which_handlers
-    |> Enum.reduce_while([], fun)
-
-    {:reply, resp, state}
+        {:reply, resp, state}
+    end
   end
 
   @doc false
@@ -202,9 +259,12 @@ defmodule Cordial.Notification do
 
   @doc false
   def handle_cast({:notify, topic, message}, %{managers: managers} = state) do
-    managers
-    |> Map.get(topic)
-    |> GenEvent.ack_notify({topic, message})
+    case Map.get(managers, topic) do
+      pid when is_pid(pid) ->
+        GenEvent.ack_notify(pid, {topic, message})
+      nil ->
+        Logger.info "[dev] no one listing to #{topic} but notify was called"
+    end
 
     {:noreply, state}
   end
@@ -212,6 +272,8 @@ defmodule Cordial.Notification do
   defp transform_genevent_call_first(call, manager, topic, message) do
     fn(handler, _acc) ->
       case GenEvent.call(manager, handler, {topic, message}) do
+        {:ignore, _value} ->
+          {:cont, []}
         {:halt, _value} ->
           log_info(call, message, topic, manager, handler)
           {:cont, []}
@@ -227,6 +289,8 @@ defmodule Cordial.Notification do
   defp transform_genevent_call(call, manager, topic, message) do
     fn(handler, trans_acc) ->
       case GenEvent.call(manager, handler, {topic, message}) do
+        {:ignore, _value} ->
+          {:cont, trans_acc}
         {:halt, _value} ->
           log_info(call, message, topic, manager, handler)
           {:halt, trans_acc}
@@ -243,7 +307,7 @@ defmodule Cordial.Notification do
     str1 = "[#{call_type}] :error"
     str2 = "value #{inspect message}"
     str3 = "handed to #{inspect handler}"
-    str4 = "for #{topic} on #{manager}"
+    str4 = "for #{inspect topic} on #{inspect manager}"
     Logger.error "#{str1} #{str2} #{str3} #{str4}"
   end
 
@@ -251,7 +315,7 @@ defmodule Cordial.Notification do
     str1 = "[#{call_type}] :halt"
     str2 = "value #{inspect message}"
     str3 = "handed to #{inspect handler}"
-    str4 = "for #{topic} on #{manager}"
+    str4 = "for #{inspect topic} on #{inspect manager}"
     Logger.info "#{str1} #{str2} #{str3} #{str4}"
   end
 end
