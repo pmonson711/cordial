@@ -40,4 +40,12 @@ defmodule Cordial.Authorization do
       other when is_boolean(other) -> other
     end
   end
+
+  def logff(cms_context) do
+    raise 'Stubbed Function'
+  end
+
+  def switch_user(cms_context) do
+    raise 'Stubbed Function'
+  end
 end
