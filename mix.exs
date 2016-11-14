@@ -51,7 +51,7 @@ defmodule Cordial.Mixfile do
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:dialyze, "~> 0.2", only: :dev},
      {:ex_doc, "~> 0.11", only: :dev},
-     {:credo, "~> 0.3", only: [:test, :dev]},
+     {:credo, "~> 0.5", only: [:test, :dev]},
      {:excoveralls, "~> 0.5", only: [:test, :dev]}
     ]
   end
