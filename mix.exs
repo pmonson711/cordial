@@ -49,9 +49,9 @@ defmodule Cordial.Mixfile do
      {:ex_admin, github: "smpallen99/ex_admin"},
      {:earmark, "~> 0.2"},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
-     {:dialyze, "~> 0.2.0", only: :dev},
+     {:dialyze, "~> 0.2", only: :dev},
      {:ex_doc, "~> 0.11", only: :dev},
-     {:credo, "~> 0.3", only: [:test, :dev]},
+     {:credo, "~> 0.5", only: [:test, :dev]},
      {:excoveralls, "~> 0.5", only: [:test, :dev]}
     ]
   end
@@ -66,6 +66,6 @@ defmodule Cordial.Mixfile do
     ["ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
      "ecto.reset": ["ecto.drop", "ecto.setup"],
      "test.rebuild": ["ecto.drop", "ecto.create", "ecto.migrate", "test"],
-     "test": ["ecto.create --quite", "ecto.migrate", "credo --strict --ignore-checks moduledoc,inspect", "test"]]
+     "test": ["ecto.create --quite", "ecto.migrate", "credo --strict --ignore-checks readability,inspect", "test"]]
   end
 end

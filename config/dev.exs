@@ -36,8 +36,8 @@ config :phoenix, :stacktrace_depth, 20
 # Configure your database
 config :cordial, Cordial.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "cordial_dev",
-  password: "cordial_dev",
+  username: "pmonson",
+  password: "pmonson",
   database: "cordial_dev",
   hostname: "localhost",
   pool_size: 10

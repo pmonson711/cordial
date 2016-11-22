@@ -2,7 +2,6 @@ defmodule Cordial.Category do
   use Cordial.Web, :model
   alias Cordial.Rsc
   alias Cordial.Category
-  alias Ecto.Multi
 
   schema "category" do
     belongs_to :rsc, Rsc
@@ -25,16 +24,5 @@ defmodule Cordial.Category do
     |> cast(params, @required_fields, @optional_fields)
     |> foreign_key_constraint(:parent_id)
     |> foreign_key_constraint(:rsc_id)
-  end
-
-  def new(model, params \\ %{}) do
-    Multi.new
-    |> Multi.insert(:rsc, Rsc.changeset(%Rsc{}, params.rsc))
-    |> Multi.insert(:category, fn rsc_inserted ->
-      case rsc_inserted do
-        %{rsc: %{id: id}} ->
-          Category.changeset(model, Map.put(params, :rsc_id, id))
-      end
-    end)
   end
 end

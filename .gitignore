@@ -24,3 +24,6 @@ erl_crash.dump
 # variables.
 /config/prod.secret.exs
 /cover/excoveralls.html
+/web/static/vendor/*.js
+/web/static/vendor/*.map
+/web/static/vendor/*.css

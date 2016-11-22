@@ -8,12 +8,13 @@ config :cordial, Cordial.Endpoint,
 
 # Print only warnings and errors during test
 config :logger, level: :warn
+# config :logger, :console, format: "[$level] $message\n"
 
 # Configure your database
 config :cordial, Cordial.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "cordial_test",
-  password: "cordial_test",
+  username: "pmonson",
+  password: "pmonson",
   database: "cordial_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox

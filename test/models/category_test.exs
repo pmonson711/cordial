@@ -2,6 +2,7 @@ defmodule Cordial.CategoryTest do
   use Cordial.ModelCase
 
   alias Cordial.Category
+  alias Cordial.Rsc
 
   @valid_attrs %{rsc_id: 1, parent_id: 1}
   @invalid_attrs %{}
@@ -23,15 +24,15 @@ defmodule Cordial.CategoryTest do
             category_id: 2}
     category = %{parent_id: 2,
                  rsc: rsc}
-    multi = Category.new %Category{}, category
+    multi = Cordial.Utils.Rsc.new %Category{}, category
 
     assert [
-      {:rsc, {:insert, rsc_changeset, []}},
-      {:category, {:changeset_fun, :insert, category_changesetfun, []}}
+      {:category_rsc, {:insert, rsc_changeset, []}},
+      {:category, {:run, category_changesetfun}}
     ] = Ecto.Multi.to_list(multi)
 
     assert rsc_changeset.valid?
-    assert %Ecto.Changeset{changes: %{parent_id: 2, rsc_id: 1}} = category_changesetfun.(%{rsc: %{id: 1}})
+    assert {:ok, %Category{parent_id: 2, rsc_id: 1}} = category_changesetfun.(%{category_rsc: %{id: 1}})
   end
 
   @tag :integration
@@ -51,8 +52,8 @@ defmodule Cordial.CategoryTest do
     category = %{parent_id: 2,
                  rsc: rsc}
 
-    assert {:ok, %{category: i_cat, rsc: i_rsc}} = Cordial.Repo.transaction Category.new(%Category{}, category)
-
-    assert i_cat.rsc_id == i_rsc.id
+    assert {:ok, %{category: %Category{rsc_id: rsc_id},
+                   category_rsc: %Rsc{id: rsc_id}}} = Cordial.Utils.Rsc.new(%Category{}, category)
+    |> Cordial.Repo.transaction
   end
 end
