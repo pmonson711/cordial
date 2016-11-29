@@ -261,7 +261,7 @@ defmodule Cordial.Notification do
       pid when is_pid(pid) ->
         GenEvent.ack_notify(pid, {topic, message})
       nil ->
-        Logger.info "[dev] no one listing to #{topic} but notify was called"
+        Logger.info "[dev] no one listening to #{topic} but notify was called"
     end
 
     {:noreply, state}

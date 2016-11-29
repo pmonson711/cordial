@@ -1,32 +1,30 @@
 defmodule Cordial.Authorization do
   alias Cordial.{
     Notification,
-    Identity,
-    Resource,
     CmsContext,
     Authorization.Acl,
     Authorization.Repo
   }
 
-  def confirm(user_id, cms_context) do
+  def confirm(user_id, cms_context \\ %CmsContext{}) do
     if is_enabled(user_id, cms_context) do
       cms_context
-      |> CmsContext.set_auth_cofirm_timestamp
-      |> Notification.foldl(:auth_confirm, %CmsContext{})
+      |> CmsContext.set_auth_confirm_timestamp
+      |> Notification.foldl(:auth_confirm, cms_context)
       |> Notification.notify(:auth_confirm_done)
     else
       {:error, :user_not_enabled}
     end
   end
 
-  def logon(user_id, cms_context) do
+  def logon(user_id, cms_context \\ %CmsContext{}) do
     if is_enabled(user_id, cms_context) do
       new_context = user_id
       |> Acl.logon_prefs(cms_context)
       |> CmsContext.reset_session_id
       |> CmsContext.set_auth_timestamp
       |> Map.put(:auth_user_id, :unknown)
-      |> Notification.fold(:auth_logon, %CmsContext{})
+      |> Notification.foldl(:auth_logon, cms_context)
       |> Notification.notify(:auth_logon_done)
       {:ok, new_context}
     else
@@ -41,11 +39,11 @@ defmodule Cordial.Authorization do
     end
   end
 
-  def logff(cms_context) do
+  def logff(_cms_context) do
     raise 'Stubbed Function'
   end
 
-  def switch_user(cms_context) do
+  def switch_user(_cms_context) do
     raise 'Stubbed Function'
   end
 end

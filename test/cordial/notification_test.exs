@@ -34,6 +34,7 @@ defmodule Cordial.NotificationTest do
   end
 
   setup_all do
+    Notification.Logger.subscribe_to_all
     Notification.add_handler(TestReceiverOne, :test)
     :ok
   end
