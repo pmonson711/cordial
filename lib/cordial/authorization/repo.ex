@@ -1,5 +1,5 @@
 defmodule Cordial.Authorization.Repo do
-  alias Cordial.{Repo}
+  alias Cordial.{Repo, Rsc}
   import Ecto.Query
 
   def is_enabled(user_id) do

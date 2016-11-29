@@ -1,6 +1,5 @@
 defmodule Cordial.CmsContext do
-  alias Cordial.Util.Calendar
-
+  alias Cordial.Utils.Calendar
   defstruct [
     auth_confirm_timestamp: "",
     auth_session_id: :empty,

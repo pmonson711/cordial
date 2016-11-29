@@ -1,7 +1,6 @@
 defmodule Cordial.Category do
   use Cordial.Web, :model
   alias Cordial.Rsc
-  alias Cordial.Category
 
   schema "category" do
     belongs_to :rsc, Rsc

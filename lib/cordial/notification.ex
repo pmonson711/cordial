@@ -50,7 +50,6 @@ defmodule Cordial.Notification do
   """
   use GenServer
   require Logger
-  alias Cordial.Notification.Logger, as: NLogger
 
   @doc false
   def start_link(opts \\ []) do
@@ -158,18 +157,17 @@ defmodule Cordial.Notification do
   @doc false
   def handle_call({:add_handler, topic, handler, args}, _from,
         %{managers: managers} = state) do
-    new = false
-    manager = if Map.has_key?(managers, topic) do
-      Map.get(managers, topic)
+    {new_managers, manager} = if Map.has_key?(managers, topic) do
+      {managers, Map.get(managers, topic)}
     else
       {:ok, pid} = GenEvent.start_link([])
-      managers = Map.put(managers, topic, pid)
+      new_managers = Map.put(managers, topic, pid)
       __MODULE__.notify({topic, pid}, :notification_add_topic)
-      pid
+      {new_managers, pid}
     end
     :ok = GenEvent.add_mon_handler(manager, handler, args)
     Logger.info "Now handling #{topic} with #{inspect(handler)}"
-    {:reply, {:ok, manager}, %{state | managers: managers}}
+    {:reply, {:ok, manager}, %{state | managers: new_managers}}
   end
 
   @doc false
@@ -263,7 +261,7 @@ defmodule Cordial.Notification do
       pid when is_pid(pid) ->
         GenEvent.ack_notify(pid, {topic, message})
       nil ->
-        Logger.info "[dev] no one listing to #{topic} but notify was called"
+        Logger.info "[dev] no one listening to #{topic} but notify was called"
     end
 
     {:noreply, state}
@@ -312,7 +310,7 @@ defmodule Cordial.Notification do
   end
 
   defp log_info(call_type, message, topic, manager, handler) do
-    str1 = "[#{call_type}] :halt"
+    str1 = "[#{call_type}] :info"
     str2 = "value #{inspect message}"
     str3 = "handed to #{inspect handler}"
     str4 = "for #{inspect topic} on #{inspect manager}"
