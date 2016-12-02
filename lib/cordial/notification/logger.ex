@@ -10,6 +10,11 @@ defmodule Cordial.Notification.Logger do
   @doc "Will register the logger to dynamically listen to all new topics"
   def subscribe_to_all do
     Notification.add_handler(__MODULE__, :notification_add_topic)
+    Notification.add_handler(__MODULE__, :notification_add_handler)
+    Notification.add_handler(__MODULE__, :notification_remove_handler)
+    Notification.add_handler(__MODULE__, :notification_unheard_notify)
+    Notification.add_handler(__MODULE__, :notification_call_halted)
+    Notification.add_handler(__MODULE__, :notification_call_errored)
   end
 
   @doc false
