@@ -22,7 +22,7 @@ defmodule Cordial.Mixfile do
      applications: applications(Mix.env)]
   end
   defp applications(:test) do
-    applications(:all) ++ [:blacksmith]
+    applications(:all)
   end
   defp applications(_all) do
     [:phoenix, :phoenix_html, :cowboy, :logger, :gettext, :phoenix_ecto,
@@ -45,7 +45,6 @@ defmodule Cordial.Mixfile do
      {:phoenix_html, "~> 2.5"},
      {:gettext, "~> 0.9"},
      {:cowboy, "~> 1.0"},
-     {:blacksmith, "~> 0.1"},
      {:ex_admin, github: "smpallen99/ex_admin"},
      {:earmark, "~> 0.2"},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
