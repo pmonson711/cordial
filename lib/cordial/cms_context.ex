@@ -6,7 +6,6 @@ defmodule Cordial.CmsContext do
     auth_session_id: :empty,
     auth_timestamp: "",
     auth_user_id: :unknown,
-    acl: nil,
     user_id: :unknown,
     new_user_id: :unknown,
     impersonation_chain: []
@@ -31,7 +30,6 @@ defmodule Cordial.CmsContext do
     |> Map.put(:auth_confirm_timestamp, "")
     |> Map.put(:auth_timestamp, "")
     |> Map.put(:auth_user_id, :unknown)
-    |> Map.put(:acl, nil)
     |> Map.put(:impersonation_chain, [])
   end
 end
