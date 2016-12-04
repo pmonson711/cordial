@@ -45,7 +45,7 @@ defmodule Cordial.NotificationTest do
   end
 
   test "Can notify" do
-    assert :ok = Notification.notify(@val, :test)
+    assert @val = Notification.notify(@val, :test)
   end
 
   test "Can map" do

@@ -14,9 +14,9 @@ defmodule Cordial.Notification do
       defmodule MyApp.EventHandler do
         use GenEvent
 
-        def handle_event({:example, msg}, _) do
+        def handle_call({:example, msg}, _) do
           IO.inspect msg
-          {:ok, []}
+          Cordial.Notification.map_response :ok
         end
       end
 
@@ -77,6 +77,7 @@ defmodule Cordial.Notification do
   @spec notify(term, atom) :: :ok
   def notify(body, topic) do
     GenServer.cast(__MODULE__, {:notify, topic, body})
+    body
   end
 
   @doc "Calls the first handlers of the topic"
@@ -111,7 +112,12 @@ defmodule Cordial.Notification do
 
   def foldl(body, topic, acc) do
     __MODULE__
-    |> GenServer.call({:foldl, topic, body, {acc, fn _old, new -> new end}})
+    |> GenServer.call({:foldl, topic, body, {acc, fn x, _acc -> x end}})
+  end
+
+  def foldl(body, topic) do
+    __MODULE__
+    |> GenServer.call({:foldl, topic, body, {body, fn x, _acc -> x end}})
   end
 
   @spec foldr(
@@ -127,7 +133,12 @@ defmodule Cordial.Notification do
 
   def foldr(body, topic, acc) do
     __MODULE__
-    |> GenServer.call({:foldr, topic, body, {acc, fn _old, new -> new end}})
+    |> GenServer.call({:foldr, topic, body, {acc, fn x, _acc -> x end}})
+  end
+
+  def foldr(body, topic) do
+    __MODULE__
+    |> GenServer.call({:foldr, topic, body, {body, fn x, _acc -> x end}})
   end
 
   @doc "Maps a notification response to a GenEvent response."
@@ -151,6 +162,7 @@ defmodule Cordial.Notification do
       {:ok, val} -> {:ok, {:ok, val}, state}
       {:halt, val} -> {:ok, {:halt, val}, state}
       {:error, val} -> {:error, {:error, val}, state}
+      val -> {:ok, {:ok, val}, state}
     end
   end
 
@@ -165,10 +177,11 @@ defmodule Cordial.Notification do
       __MODULE__.notify({topic, pid}, :notification_add_topic)
       {new_managers, pid}
     end
-    :ok = GenEvent.add_mon_handler(manager, handler, args)
+    :ok = do_add_mon_handler(manager, handler, args)
     Logger.info "Now handling #{topic} with #{inspect(handler)}"
     {:reply, {:ok, manager}, %{state | managers: new_managers}}
   end
+
 
   @doc false
   def handle_call({:remove_handler, topic, handler, args}, _from,
@@ -259,12 +272,21 @@ defmodule Cordial.Notification do
   def handle_cast({:notify, topic, message}, %{managers: managers} = state) do
     case Map.get(managers, topic) do
       pid when is_pid(pid) ->
-        GenEvent.ack_notify(pid, {topic, message})
+        GenEvent.notify(pid, {topic, message})
       nil ->
         Logger.info "[dev] no one listening to #{topic} but notify was called"
     end
 
     {:noreply, state}
+  end
+
+  defp do_add_mon_handler(manager, handler, args) do
+    case GenEvent.add_mon_handler(manager, handler, args) do
+      :ok -> :ok
+      {:error, :already_present} ->
+        :ok
+      result -> result
+    end
   end
 
   defp transform_genevent_call_first(call, manager, topic, message) do
@@ -274,9 +296,11 @@ defmodule Cordial.Notification do
           {:cont, []}
         {:halt, _value} ->
           log_info(call, message, topic, manager, handler)
+          __MODULE__.notify({call, message, topic, manager, handler}, :notification_call_halted)
           {:cont, []}
         {:error, _value} ->
           log_error(call, message, topic, manager, handler)
+          __MODULE__.notify({call, message, topic, manager, handler}, :notification_call_errored)
           {:cont, []}
         {:ok, value}     -> {:halt, value}
         value            -> {:halt, value}
@@ -291,9 +315,11 @@ defmodule Cordial.Notification do
           {:cont, trans_acc}
         {:halt, _value} ->
           log_info(call, message, topic, manager, handler)
+          __MODULE__.notify({call, message, topic, manager, handler}, :notification_call_halted)
           {:halt, trans_acc}
         {:error, _value} ->
           log_error(call, message, topic, manager, handler)
+          __MODULE__.notify({call, message, topic, manager, handler}, :notification_call_errored)
           {:cont, trans_acc}
         {:ok, value}     -> {:cont, [value|trans_acc]}
         value            -> {:cont, [value|trans_acc]}
