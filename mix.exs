@@ -11,6 +11,7 @@ defmodule Cordial.Mixfile do
      start_permanent: Mix.env == :prod,
      aliases: aliases,
      test_coverage: [tool: ExCoveralls],
+     preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test],
      deps: deps]
   end
 
@@ -51,7 +52,7 @@ defmodule Cordial.Mixfile do
      {:dialyze, "~> 0.2", only: :dev},
      {:ex_doc, "~> 0.11", only: :dev},
      {:credo, "~> 0.5", only: [:test, :dev]},
-     {:excoveralls, "~> 0.5", only: [:test, :dev]}
+     {:excoveralls, "~> 0.5", only: [:test]}
     ]
   end
 
@@ -65,6 +66,6 @@ defmodule Cordial.Mixfile do
     ["ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
      "ecto.reset": ["ecto.drop", "ecto.setup"],
      "test.rebuild": ["ecto.drop", "ecto.create", "ecto.migrate", "test"],
-     "test": ["ecto.create --quite", "ecto.migrate", "credo --strict --ignore-checks readability,inspect", "test"]]
+     "test": ["ecto.create --quite", "ecto.migrate", "credo --strict --ignore-checks readability,inspect", "coveralls"]]
   end
 end
