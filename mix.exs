@@ -27,7 +27,7 @@ defmodule Cordial.Mixfile do
   end
   defp applications(_all) do
     [:phoenix, :phoenix_html, :cowboy, :logger, :gettext, :phoenix_ecto,
-     :postgrex, :ex_admin, :phoenix_pubsub]
+     :postgrex, :ex_admin, :phoenix_pubsub, :registry]
   end
 
   # Specifies which paths to compile per environment.
@@ -48,6 +48,9 @@ defmodule Cordial.Mixfile do
      {:cowboy, "~> 1.0"},
      {:ex_admin, github: "smpallen99/ex_admin"},
      {:earmark, "~> 0.2"},
+     {:registry, git: "https://github.com/elixir-lang/registry.git", branch: "master"},
+     {:bigflake, "~> 0.3.0"},
+     {:uuid, "~> 1.1"},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:dialyze, "~> 0.2", only: :dev},
      {:ex_doc, "~> 0.11", only: :dev},
