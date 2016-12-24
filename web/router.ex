@@ -18,6 +18,7 @@ defmodule Cordial.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
+    forward "/modules", CmsModule.Router
   end
 
   scope "/admin", ExAdmin do
