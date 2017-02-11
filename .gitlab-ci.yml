@@ -18,9 +18,30 @@ before_script:
   - apt-get install -y postgresql-client
   - mix local.hex --force
   - mix deps.get --only test
-  - mix
-  - mix ecto.reset
+
+stages:
+  - build
+  - test
 
 mix:
+  stage: build
   script:
+  - mix
+  cache:
+    untracked: true
+
+credo:
+  stage: test
+  script:
+    - mix credo list
+  allow_failure: true
+  cache:
+    untracked: true
+
+mix_test:
+  stage: test
+  script:
+  - mix ecto.reset
   - mix test
+  cache:
+    untracked: true
