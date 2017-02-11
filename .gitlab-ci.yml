@@ -9,12 +9,16 @@ services:
  
 variables:
   MIX_ENV: "test"
+  POSTGRES_DB: cordial_test
+  POSTGRES_USER: pmonson
+  POSTGRES_PASSWORD: "pmonson"
 
 before_script:
   - apt-get update
   - apt-get install -y postgresql-client
   - mix local.hex --force
   - mix deps.get --only test
+  - mix
   - mix ecto.reset
 
 mix:
