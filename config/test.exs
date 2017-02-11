@@ -16,5 +16,5 @@ config :cordial, Cordial.Repo,
   username: "pmonson",
   password: "pmonson",
   database: "cordial_test",
-  hostname: "localhost",
+  hostname: if(System.get_env("CI"), do: "postgres", else: "localhost"),
   pool: Ecto.Adapters.SQL.Sandbox
