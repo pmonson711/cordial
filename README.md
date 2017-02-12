@@ -1,3 +1,6 @@
+[![build status](https://gitlab.com/pmonson711/cordial/badges/develop/build.svg)](https://gitlab.com/pmonson711/cordial/commits/develop)
+[![coverage report](https://gitlab.com/pmonson711/cordial/badges/develop/coverage.svg)](https://gitlab.com/pmonson711/cordial/commits/develop)
+
 # Cordial
 
 To start your Phoenix app:
