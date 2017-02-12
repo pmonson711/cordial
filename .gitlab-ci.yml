@@ -17,31 +17,36 @@ before_script:
   - apt-get update
   - apt-get install -y postgresql-client
   - mix local.hex --force
-  - mix deps.get --only test
 
 stages:
+  - deps
   - build
   - test
+
+cache:
+  key: "$CI_BUILD_REF"
+  untracked: true
+
+mix:
+  stage: deps
+  script:
+  - mix deps.get --only test
+  - mix deps.compile
 
 mix:
   stage: build
   script:
+  - mix deps.get --only test
   - mix
-  cache:
-    untracked: true
 
 credo:
   stage: test
   script:
     - mix credo list
   allow_failure: true
-  cache:
-    untracked: true
 
 mix_test:
   stage: test
   script:
   - mix ecto.reset
   - mix test
-  cache:
-    untracked: true
