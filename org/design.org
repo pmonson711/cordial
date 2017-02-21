@@ -6,6 +6,42 @@
 * Overview
 
 * Design
+** Applications
+
+#+BEGIN_SRC plantuml :file diagrams/applications.png
+title Applications
+
+package Cordial {
+object Rsc 
+object Category 
+object Edge 
+object AccessControl
+object Identity
+object Identity.Type
+object Repository
+object Repository.Transactions
+object CmsContext
+object Media
+object Migrator.Partition
+}
+package Cordial.Module {
+object Scanner
+object Activator
+object Migrator
+}
+package Cordial.ScatterGather {
+object Scatter
+object Gather
+}
+package Cordial.ReadView {
+object Pivot
+object Pivot.View
+}
+object Cordial.Email {
+}
+object Cordial.API {
+}
+#+END_SRC
 
 ** Access Control
 #+BEGIN_SRC ditaa :file diagrams/authentication.png :export png

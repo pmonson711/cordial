@@ -66,6 +66,6 @@ defmodule Cordial.Mixfile do
     ["ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
      "ecto.reset": ["ecto.drop", "ecto.setup"],
      "test.rebuild": ["ecto.drop", "ecto.create", "ecto.migrate", "test"],
-     "test": ["ecto.create --quite", "ecto.migrate", "credo --strict --ignore-checks readability,inspect", "coveralls"]]
+     "test": ["ecto.create --quite", "ecto.migrate", "credo --strict --ignore-checks readability,inspect", "test"]]
   end
 end
