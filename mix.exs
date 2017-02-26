@@ -26,7 +26,9 @@ defmodule Cordial.Mixfile do
   end
 
   defp aliases do
-    ["test": ["credo --strict --ignore-checks readability,inspect",
-              "test"]]
+    ["ecto.setup": ["ecto.create", "ecto.migrate"],
+     "ecto.reset": ["ecto.drop", "ecto.setup"],
+     "test.rebuild": ["ecto.drop", "ecto.create", "ecto.migrate", "test"],
+     "test": ["credo --strict --ignore-checks readability,inspect", "test"]]
   end
 end
