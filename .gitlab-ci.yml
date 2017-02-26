@@ -10,9 +10,7 @@ mix_test:
   - postgres:9.4
   variables:
     MIX_ENV: "test"
-    POSTGRES_DB: cordial_test
-    POSTGRES_USER: pmonson
-    POSTGRES_PASSWORD: "pmonson"
+    POSTGRES_DB: cordial_db_test
   script:
   - apt-get update
   - apt-get install -y postgresql-client
