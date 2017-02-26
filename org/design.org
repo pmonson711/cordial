@@ -12,36 +12,39 @@
 title Applications
 
 package Cordial {
-object Rsc 
-object Category 
-object Edge 
-object AccessControl
-object Identity
-object Identity.Type
-object Repository
-object Repository.Transactions
-object CmsContext
-object Media
-object Migrator.Partition
+class Rsc 
+class Category 
+class Edge 
+class AccessControl
+class Identity
+class Identity.Type
+class Repository
+class Repository.Transactions
+class CmsContext
+class Media
+class Migrator.Partition
 }
 package Cordial.Module {
-object Scanner
-object Activator
-object Migrator
+class Scanner
+class Activator
+class Migrator
 }
 package Cordial.ScatterGather {
-object Scatter
-object Gather
+class Scatter
+class Gather
 }
 package Cordial.ReadView {
-object Pivot
-object Pivot.View
+class Pivot
+class Pivot.View
 }
-object Cordial.Email {
+class Cordial.Email {
 }
-object Cordial.API {
+class Cordial.API {
 }
 #+END_SRC
+
+#+RESULTS:
+[[file:diagrams/applications.png]]
 
 ** Access Control
 #+BEGIN_SRC ditaa :file diagrams/authentication.png :export png
