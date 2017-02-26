@@ -11,6 +11,8 @@ mix_test:
   variables:
     MIX_ENV: "test"
     POSTGRES_DB: cordial_db_test
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
   script:
   - apt-get update
   - apt-get install -y postgresql-client
