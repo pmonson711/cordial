@@ -45,8 +45,7 @@ defmodule Cordial.Store.CategoryTest do
     ] = Multi.to_list(multi)
 
     assert rsc_changeset.valid?
-    assert {:ok, %Category{parent_id: 2, rsc_id: 1}} =
-      category_changesetfun.(%{category_rsc: %{id: 1}})
+    assert {:ok, %Category{parent_id: 2, rsc_id: 1}} = category_changesetfun.(%{category_rsc: %{id: 1}})
   end
 
   @tag :integration
@@ -55,8 +54,11 @@ defmodule Cordial.Store.CategoryTest do
 
     assert {:ok, c} = Repo.insert changeset
     assert c.id > 1
-    assert %Category{rsc_id: 1, rsc: %Rsc{id: 1}} =
-      Repo.one(from f in Category, where: f.id == ^c.id, preload: :rsc)
+    assert %Category{rsc_id: 1, rsc: %Rsc{id: 1}} = Repo.one(
+      from f in Category,
+      where: f.id == ^c.id,
+      preload: :rsc
+    )
   end
 
   @tag :integration
@@ -72,30 +74,35 @@ defmodule Cordial.Store.CategoryTest do
     |> Transactions.new_rsc(category)
     |> Repo.transaction
 
-    assert {:ok, %{category: %Category{rsc_id: rsc_id},
-                   category_rsc: %Rsc{id: rsc_id}}} = inserted
+    assert {:ok, %{category: %Category{rsc_id: rsc_id}, category_rsc: %Rsc{id: rsc_id}}} = inserted
   end
 
   @tag :integration
   test "can update a category rsc" do
-    (from c in Category, where: c.id == 1, preload: :rsc)
-    |> Repo.one
-    |> Transactions.update_rsc(%{rsc: %{name: "fancy new name",
-                                       modified_by_id: 1}})
+    Category
+    |> Repo.get(1)
+    |> Repo.preload(:rsc)
+    |> Transactions.update_rsc(%{rsc: %{name: "fancy new name", modified_by_id: 1}})
     |> Repo.transaction
 
-    assert %Category{rsc: %Rsc{name: "fancy new name", version: 2}} =
-      Repo.one(from c in Category, where: c.id == 1, preload: :rsc)
+    assert %Category{rsc: %Rsc{name: "fancy new name", version: 2}} = Repo.one(
+      from c in Category,
+      where: c.id == 1,
+      preload: :rsc
+    )
   end
 
   @tag :integration
   test "can reset the parent" do
-    (from c in Category, where: c.id == 3)
-    |> Repo.one
+    Category
+    |> Repo.get(3)
     |> Category.update_parent(1)
     |> Repo.update!
 
-    assert 1 = Repo.one(from c in Category, where: c.id == 1,
-      select: c.parent_id)
+    assert 1 = Repo.one(
+      from c in Category,
+      where: c.id == 1,
+      select: c.parent_id
+    )
   end
 end
