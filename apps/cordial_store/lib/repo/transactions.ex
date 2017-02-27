@@ -1,4 +1,4 @@
-defmodule Cordial.Store.Transactions do
+defmodule Cordial.Repo.Transactions do
   alias Cordial.Repo
   alias Cordial.Store.Rsc
   alias Cordial.Store.Category

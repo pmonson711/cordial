@@ -38,6 +38,7 @@ defmodule Cordial.Store.Mixfile do
   defp deps do
     [{:ecto, "~> 2.1"},
      {:postgrex, "~> 0.13"},
-     {:depcache, "~> 1.2"}]
+     {:depcache, "~> 1.2"},
+     {:arbor, "~> 1.0"}]
   end
 end

@@ -6,6 +6,9 @@ use Mix.Config
 config :cordial_store,
   ecto_repos: [Cordial.Repo]
 
+config :depcache,
+  memory_max: 512
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"

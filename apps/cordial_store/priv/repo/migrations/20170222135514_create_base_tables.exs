@@ -14,7 +14,7 @@ defmodule Cordial.Repo.Migrations.CreateBaseTables do
 
     create table(:category) do
       add :rsc_id, references(:rsc), null: false
-      add :parent_id, references(:category), null: false
+      add :parent_id, references(:category)
       timestamps()
     end
 

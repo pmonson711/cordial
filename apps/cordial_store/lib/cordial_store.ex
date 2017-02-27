@@ -9,7 +9,10 @@ defmodule Cordial.Store do
 
     # Define workers and child supervisors to be supervised
     children = [
-      supervisor(Cordial.Repo, [])
+      supervisor(Cordial.Repo, []),
+      worker(:depcache, [:depcache, [memory_max:
+                                     Application.fetch_env!(:depcache, :memory_max)]]),
+      worker(Cordial.Cache, [:depcache])
       # Starts a worker by calling: Cordial.Store.Worker.start_link(arg1, arg2, arg3)
       # worker(Cordial.Store.Worker, [arg1, arg2, arg3]),
     ]

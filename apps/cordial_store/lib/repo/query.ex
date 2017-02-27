@@ -1,5 +1,5 @@
-defmodule Cordial.Repo do
-  use Ecto.Repo, otp_app: :cordial_store
+defmodule Cordial.Repo.Query do
+  import Ecto.Query
 
   def full_rsc_preload do
     [category: basic_category_preload(),
@@ -24,11 +24,11 @@ defmodule Cordial.Repo do
 
   def preload_rsc(query) do
     query
-    |> preload(full_rsc_preload())
+    |> preload(^full_rsc_preload())
   end
 
   def preload_rsc_field(query) do
     query
-    |> preload(full_rsc_field_preload())
+    |> preload(^full_rsc_field_preload())
   end
 end

@@ -14,13 +14,13 @@ defmodule Cordial.Repo.Migrations.InsertDefaults do
     Repo.insert %Cordial.Store.Identity {id: 2, rsc_id: 2, identity_type_id: 1}
 
     Repo.insert %Cordial.Store.Rsc{id: 3, name: "meta"}
-    Repo.insert %Cordial.Store.Category{id: 1, rsc_id: 3, parent_id: 1}
+    Repo.insert %Cordial.Store.Category{id: 1, rsc_id: 3}
 
     Repo.insert %Cordial.Store.Rsc{id: 4, name: "category"}
     Repo.insert %Cordial.Store.Category{id: 2, rsc_id: 4, parent_id: 1}
 
     Repo.insert %Cordial.Store.Rsc{id: 5, name: "thing"}
-    Repo.insert %Cordial.Store.Category{id: 3, rsc_id: 5, parent_id: 3}
+    Repo.insert %Cordial.Store.Category{id: 3, rsc_id: 5}
 
 
     Repo.update_all(Cordial.Store.Rsc, set: [visible_for_id: 2, inserted_by_id: 1,

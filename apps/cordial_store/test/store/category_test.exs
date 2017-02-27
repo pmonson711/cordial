@@ -7,7 +7,7 @@ defmodule Cordial.Store.CategoryTest do
   alias Cordial.Repo
   alias Cordial.Store.Category
   alias Cordial.Store.Rsc
-  alias Cordial.Store.Transactions
+  alias Cordial.Repo.Transactions
 
   setup do
     :ok = Sandbox.checkout(Repo)
@@ -101,7 +101,7 @@ defmodule Cordial.Store.CategoryTest do
 
     assert 1 = Repo.one(
       from c in Category,
-      where: c.id == 1,
+      where: c.id == 3,
       select: c.parent_id
     )
   end

@@ -1,4 +1,5 @@
-%{"bunt": {:hex, :bunt, "0.2.0", "951c6e801e8b1d2cbe58ebbd3e616a869061ddadcc4863d0a2182541acae9a38", [:mix], []},
+%{"arbor": {:hex, :arbor, "1.0.3", "33b70e06315ae2a774594e557915d63044d89490735c78fd49cc8ef67bb3dcbf", [:mix], [{:ecto, ">= 2.0.0", [hex: :ecto, optional: false]}, {:postgrex, ">= 0.0.0", [hex: :postgrex, optional: false]}]},
+  "bunt": {:hex, :bunt, "0.2.0", "951c6e801e8b1d2cbe58ebbd3e616a869061ddadcc4863d0a2182541acae9a38", [:mix], []},
   "connection": {:hex, :connection, "1.0.4", "a1cae72211f0eef17705aaededacac3eb30e6625b04a6117c1b2db6ace7d5976", [:mix], []},
   "credo": {:hex, :credo, "0.6.1", "a941e2591bd2bd2055dc92b810c174650b40b8290459c89a835af9d59ac4a5f8", [:mix], [{:bunt, "~> 0.2.0", [hex: :bunt, optional: false]}]},
   "db_connection": {:hex, :db_connection, "1.1.1", "f9d246e8f65b9490945cf7360875eee18fcec9a0115207603215eb1fd94c39ef", [:mix], [{:connection, "~> 1.0.2", [hex: :connection, optional: false]}, {:poolboy, "~> 1.5", [hex: :poolboy, optional: true]}, {:sbroker, "~> 1.0", [hex: :sbroker, optional: true]}]},

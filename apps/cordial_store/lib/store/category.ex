@@ -1,5 +1,6 @@
 defmodule Cordial.Store.Category do
   use Ecto.Schema
+  use Arbor.Tree
 
   import Ecto.Changeset
 
@@ -21,7 +22,7 @@ defmodule Cordial.Store.Category do
   def new(model, params \\ %{}) do
     model
     |> cast(params, ~w(rsc_id parent_id)a)
-    |> validate_required(~w(rsc_id parent_id)a)
+    |> validate_required(:rsc_id)
     |> foreign_key_constraint(:parent_id)
     |> foreign_key_constraint(:rsc_id)
   end
